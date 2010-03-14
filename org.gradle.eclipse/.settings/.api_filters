@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.gradle.eclipse" version="2">
+    <resource path="src/main/java/org/gradle/eclipse/GradleExecScheduler.java" type="org.gradle.eclipse.GradleExecScheduler">
+        <filter id="643846161">
+            <message_arguments>
+                <message_argument value="GradleProcess"/>
+                <message_argument value="GradleExecScheduler"/>
+                <message_argument value="startGradleBuildRun(ILaunchConfiguration, String, GradleProcess)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

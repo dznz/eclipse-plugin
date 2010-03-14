@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+	<extension point="org.eclipse.core.contenttype.contentTypes">
+   		<content-type base-type="org.eclipse.core.runtime.xml"
+			file-extensions="gradle"
+            id="org.gradle.eclipse.contenttype.buildfile"
+            name="Gradle build file"
+            priority="normal">
+      			<describer class="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
+         				<parameter name="element" value="apples"/>
+				</describer>
+   		</content-type>
+	</extension>
+	<extension point="org.eclipse.debug.ui.consoleColorProviders">
+      <consoleColorProvider
+            class="org.gradle.eclipse.ui.console.GradleConsoleColorProvider"
+            processType="org.gradle.eclipse.gradleProcess"
+            id="com.breskeby.eclipse.gradle.ui.consoleColorProvider">
+      </consoleColorProvider>
+   </extension>
+   <extension point="org.eclipse.core.runtime.preferences">
+		<initializer class="org.gradle.eclipse.preferences.GradlePreferenceInitializer"/>
+	</extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            name="%PreferencePage.gradlePreferences"
+            class="org.gradle.eclipse.preferences.GradleRuntimePreferencePage"
+            id="org.gradle.eclipse.preferences.GradleRuntimePreferencePage">
+      </page>
+   </extension>
+
+       
+    
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            category="org.eclipse.ui.externaltools"
+            delegate="org.gradle.eclipse.launchConfigurations.GradleLaunchDelegate"
+            delegateDescription="%GradleLaunchDelegate.description"
+            delegateName="%GradleLaunchDelegate.name"
+            id="org.gradle.eclipse.GradleLaunchConfigurationType"
+            migrationDelegate="org.gradle.eclipse.launchConfigurations.GradleMigrationDelegate"
+            modes="run, debug"
+            name="%GradleBuild"
+            sourceLocatorId="org.eclipse.ant.ui.debug.sourceLookupDirector"
+            sourcePathComputerId="org.eclipse.ant.ui.debug.sourcePathComputer">
+      </launchConfigurationType>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            type="org.gradle.eclipse.GradleLaunchConfigurationType"
+            helpContextId="org.eclipse.ui.externaltools.launchConfigHelpContext.ant"
+            description="%gradleLaunchConfigurationTabGroup.description"
+            class="org.gradle.eclipse.launchConfigurations.GradleTabGroup"
+            id="org.gradle.eclipse.launchConfigurationTabGroup.gradle">
+      </launchConfigurationTabGroup>
+   </extension>
+   
+   <extension
+         point="org.eclipse.debug.ui.launchShortcuts">
+      <shortcut
+            category="org.eclipse.ui.externaltools"
+            class="org.gradle.eclipse.launchConfigurations.GradleLaunchShortcut"
+            description="%GradleBuildShortcut.description"
+            icon="icons/run_gradle_build.gif"
+            id="org.gradle.eclipse.ui.gradleShortcut"
+            label="%GradleLaunchShortcut.label"
+            modes="run">
+        <contextualLaunch>
+           <enablement>
+             <with variable="selection">
+               <count value="1"/>
+               <iterate operator="and">
+                   <test property="org.eclipse.debug.ui.matchesContentType"
+                         value="org.gradle.eclipse.contenttype.buildfile"/>
+               </iterate>
+             </with>
+           </enablement>
+           <contextLabel
+         	  mode="run"
+         	  label="%GradleLaunchShortcut.label"/>
+  		 </contextualLaunch>
+        <configurationType
+              id="org.gradle.eclipse.GradleLaunchConfigurationType">
+        </configurationType>
+      </shortcut>
+      <shortcut
+            category="org.eclipse.ui.externaltools"
+            class="org.gradle.eclipse.launchConfigurations.GradleLaunchShortcutWithDialog"
+            description="%GradleBuild...Shortcut.description"
+            icon="icons/run_gradle_build.gif"
+            id="org.gradle.eclipse.ui.gradleShortcutWithDialog"
+            label="%GradleLaunchShortcutWithDialog.label"
+            modes="run">
+        <contextualLaunch>
+        	<enablement>
+             <with variable="selection">
+               <count value="1"/>
+               <iterate>
+                 <or>
+                   <test property="org.eclipse.debug.ui.matchesContentType" value="org.gradle.eclipse.contenttype.buildfile"/>
+                 </or>
+               </iterate>
+             </with>
+           </enablement>
+           <contextLabel
+         	  mode="run"
+         	  label="%GradleLaunchShortcutWithDialog.label"/>
+  		 </contextualLaunch>
+        <configurationType
+              id="org.gradle.eclipse.GradleLaunchConfigurationType">
+        </configurationType>
+      </shortcut>
+   </extension><!--
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="org.gradle.eclipse.editors.BasicGradleEditor"
+            contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
+            extensions="gradle"
+            icon="icons/gradle_file.gif"
+            default="true"
+            id="org.gradle.eclipse.editors.BasicGradleEditor"
+            name="Gradle Editor">
+            <contentTypeBinding
+               contentTypeId="org.codehaus.groovy.eclipse.groovySource">
+         </contentTypeBinding>
+      </editor>
+   </extension>-->
+   
+</plugin>
