@@ -73,7 +73,7 @@ public class GradleExecScheduler {
 	}
 
 	public void refreshTaskView(final String absolutePath, boolean synched) {
-		if(absolutePath==null || !absolutePath.isEmpty()){
+		if(absolutePath!=null && !absolutePath.isEmpty()){
 			final File absoluteDirectory = new File(absolutePath).getParentFile();
 			
 			if(absoluteDirectory.exists()){

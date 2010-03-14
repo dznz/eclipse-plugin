@@ -15,6 +15,7 @@
  */
 package org.gradle.eclipse.job;
 
+import java.io.File;
 import java.util.List;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -64,6 +65,9 @@ public class RefreshTaskJob extends AbstractGradleJob{
 		pluginLord.startExecutionQueue();
 		final BooleanHolder isComplete = new BooleanHolder();
 
+		StringBuffer additionalCmdLine = new StringBuffer(" -b ");
+		additionalCmdLine.append(getBuildFileName());
+		
 		GradlePluginLord.RequestObserver observer = new GradlePluginLord.RequestObserver() {
 	           
 			public void executionRequestAdded( ExecutionRequest request )
@@ -81,7 +85,7 @@ public class RefreshTaskJob extends AbstractGradleJob{
 	        };
 
 	    pluginLord.addRequestObserver(observer, false);
-	    pluginLord.addRefreshRequestToQueue();
+	    pluginLord.addRefreshRequestToQueue(additionalCmdLine.toString());
 		//keep job open til listener reports gradle has finished
 		while(!isComplete.getValue()){
 			try {
@@ -96,5 +100,9 @@ public class RefreshTaskJob extends AbstractGradleJob{
 			return new Status(IStatus.WARNING, GradlePlugin.PLUGIN_ID, "Error while recalculating Gradle Tasks");
 		}
 		return Status.OK_STATUS;	
+	}
+
+	private String getBuildFileName() {
+		return new File(buildFilePath).getName();
 	}
 }
