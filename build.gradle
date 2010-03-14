@@ -1,0 +1,59 @@
+/*
+ * Copyright 2010 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+
+/**
+ * This buildfile is used to build a complete distribution archive of the gradle eclipse feature
+ * The gradle eclipse feature contains two eclipse plugins:
+ * 1. org.codehaus.gradle
+ *	This plugin wraps a complete gradle distribution in a eclipse/osgi plugin and exports the gradle libs in its manifest to be
+ *	reused by other osgi plugins
+ *
+ * 2. org.gradle.eclipse
+ *	This plugin contains all logic, extension points and implementations to extend the eclipse ide. 
+ *	By default it imports the gradle-api exported via org.codehaus.gradle
+ *
+ * To build this gradle eclipse plugin the following steps should be implemented in this build file:
+ *	1. copy org.coehaus.gradle and org.gradle.eclipse to a build working directory.
+	2. resolve a matching gradle distribution and merge it into the org.codehaus.gradle plugin skeleton.
+	3. update the import/export statements in the osgi manifests of org.gradle.eclipse and org.codehaus.gradle
+	4. resolve a eclipse distribution to run the pde build (actual we're using eclipse-sdk-3.5.2)
+	4. run the pde build to
+		- build a valid eclipse plugin archive
+		- create a update site
+		- run tests
+ */
+
+
+repositories {
+  add(new org.apache.ivy.plugins.resolver.URLResolver()) {
+    name = 'gradle-snapshots'
+	addArtifactPattern 'http://snapshots.dist.codehaus.org/([organization]/)[artifact](-[revision])(-[classifier]).[ext]'
+  }
+}
+
+configurations {
+	workspaceSetup // the configuration to build a complete pde environment workspace including a valid gradle dist
+	eclipseBase // the eclipse base setup needed to run a pde build
+}
+
+dependencies{
+	//workspaceSetup "gradle:gradle:0.9-20100309203241+0100:bin@zip"
+}
+
+task mergeGradleDist << {
+	configurations.workspaceSetup.resolve()
+}
