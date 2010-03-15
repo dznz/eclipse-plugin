@@ -37,8 +37,8 @@
 		- run tests
  */
 
-
 repositories {
+  // get the latest available gradle snapshot. Are files resolved via URLResolver are cacheable?
   add(new org.apache.ivy.plugins.resolver.URLResolver()) {
     name = 'gradle-snapshots'
 	addArtifactPattern 'http://snapshots.dist.codehaus.org/([organization]/)[artifact](-[revision])(-[classifier]).[ext]'
@@ -51,9 +51,38 @@ configurations {
 }
 
 dependencies{
-	//workspaceSetup "gradle:gradle:0.9-20100309203241+0100:bin@zip"
+	workspaceSetup "gradle:gradle:0.9-20100309203241+0100:bin@zip"
+}
+
+task clean(type: Delete) {
+	from 'build'
+}
+
+task copyFragments << {
+    copy {
+        from 'org.gradle.eclipse'
+        into 'build/org.gradle.eclipse'
+    }
+    copy {
+        from 'org.codehaus.gradle'
+        into 'build/org.codehaus.gradle'
+    }
 }
 
 task mergeGradleDist << {
-	configurations.workspaceSetup.resolve()
+	configurations.workspaceSetup.files.each { depFile ->
+		def dirName = "${depFile.name.substring(0, depFile.name.length()-8)}/"
+		FileTree zipContent =  zipTree("${depFile.absolutePath}")
+		
+		copy {
+			zipContent.visit {node ->
+				if(node.toString().endsWith(dirName)){
+					println (node)
+			    	from node
+				}
+			}
+			// Determine the destination directory later
+			into 'build/org.codehaus.gradle'
+		}
+	}
 }
