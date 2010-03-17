@@ -37,6 +37,25 @@
 		- run tests
  */
 
+//util methods
+String createBundleClasspath(FileTree zipContent){
+	def BUNDLE_LIB_SEPERATOR = ",\n "
+	
+	StringBuffer buffer = new StringBuffer();
+	zipContent.visit {node ->
+		if(node.toString().endsWith("jar") && !node.toString().contains("/plugins/")){
+			def filepath = node.relativePath.pathString
+			def bundleClasspathEntry = filepath.substring(filepath.indexOf('/') + 1)
+			buffer.append(bundleClasspathEntry).append(BUNDLE_LIB_SEPERATOR)
+		}
+	}
+	def bundleClasspath = buffer.toString()
+	
+	//remove the last colone and linebreak
+	bundleClasspath.substring(0, bundleClasspath.length() - BUNDLE_LIB_SEPERATOR.length())	
+}
+//
+
 repositories {
   // get the latest available gradle snapshot. Are files resolved via URLResolver are cacheable?
   add(new org.apache.ivy.plugins.resolver.URLResolver()) {
@@ -51,38 +70,48 @@ configurations {
 }
 
 dependencies{
-	workspaceSetup "gradle:gradle:0.9-20100309203241+0100:bin@zip"
+	workspaceSetup "gradle:gradle:0.9-20100315112026+0100:bin@zip"
 }
 
+//tasks
 task clean(type: Delete) {
 	from 'build'
 }
 
-task copyFragments << {
+task copyFragments(dependsOn:'clean') << {
     copy {
         from 'org.gradle.eclipse'
-        into 'build/org.gradle.eclipse'
+        into 'build/tmp/org.gradle.eclipse'
     }
     copy {
         from 'org.codehaus.gradle'
-        into 'build/org.codehaus.gradle'
+        into 'build/tmp/org.codehaus.gradle'
+    }
+	copy {
+        from 'org.gradle.eclipse.feature'
+        into 'build/tmp/org.gradle.eclipse.feature'
     }
 }
 
-task mergeGradleDist << {
+task mergeGradleDist(dependsOn:'copyFragments') << {
+	String BUNDLE_CLASSPATH_PLACEHOLDER = "_BUNDLE_CLASSPATH_"
+	FileTree zipContent = null
 	configurations.workspaceSetup.files.each { depFile ->
-		def dirName = "${depFile.name.substring(0, depFile.name.length()-8)}/"
-		FileTree zipContent =  zipTree("${depFile.absolutePath}")
-		
+		zipContent =  zipTree(depFile)
 		copy {
-			zipContent.visit {node ->
-				if(node.toString().endsWith(dirName)){
-					println (node)
-			    	from node
-				}
-			}
-			// Determine the destination directory later
-			into 'build/org.codehaus.gradle'
+		    from(zipTree(depFile)) {
+		        eachFile { details ->
+		            details.path = details.path.substring(details.relativePath.segments[0].length())
+		        }
+		    }
+		 	into 'build/tmp/org.codehaus.gradle/'
 		}
-	}
+	}	
+	
+	String bundleClasspath = createBundleClasspath(zipContent);
+	File manifestFile = new File('build/tmp/org.codehaus.gradle/META-INF/MANIFEST.MF')
+		
+	def manifestContent = manifestFile.text
+	manifestContent = manifestContent.replaceAll(BUNDLE_CLASSPATH_PLACEHOLDER, bundleClasspath)
+	manifestFile.write(manifestContent)
 }
