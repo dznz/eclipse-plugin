@@ -37,6 +37,37 @@
 		- run tests
  */
 
+//apply url:"/Users/Rene/workspaces/gradle/github/gradleplugins/pdePlugin/build/libs/pdePlugin-0.8.jar"
+usePlugin(com.thalesgroup.gradle.pde.FeaturePdeBuild)
+
+buildscript { 
+    repositories { 
+		flatDir(dirs: "/Users/Rene/workspaces/gradle/github/gradleplugins/pdePlugin/build/libs")
+	} 
+    dependencies {
+        classpath ':pdePlugin:0.8' 
+    } 
+}
+
+configure(featurePde){	
+	def projectDir = getRootDir()
+	featureName = "org.gradle.eclipse.feature"
+	envConfigs = "*, *, *"
+	buildDirectory = "/Users/Rene/workspaces/gradle/github/eclipse-plugin/build/tmp"
+	publishDirectory = "${projectDir}/build/tmp/publish"	
+	pluginsSrcDirList = ["${projectDir}/build/tmp/plugins"]
+	featuresSrcDir = "${projectDir}/build/tmp/features"
+	builderDir = "${projectDir}/build/tmp"
+	base = "/Applications"
+	buildId = "graclipse"
+	baseLocation = "/Applications/eclipse-sdk-3.5.2"	
+	eclipseLocation = "/Applications/eclipse-sdk-3.5.2"
+	eclipseLauncher = "/Applications/eclipse-sdk-3.5.2"
+	equinoxLauncher="/Applications/eclipse-sdk-3.5.2/plugins/org.eclipse.equinox.launcher"
+	equinoxLauncherPluginVersion = "1.0.201.R35x_v20090715"
+	pdeBuildPluginVersion = "3.5.2.R35x_20100114"
+}
+
 //util methods
 String createBundleClasspath(FileTree zipContent){
 	def BUNDLE_LIB_SEPERATOR = ",\n "
@@ -81,17 +112,31 @@ task clean(type: Delete) {
 task copyFragments(dependsOn:'clean') << {
     copy {
         from 'org.gradle.eclipse'
-        into 'build/tmp/org.gradle.eclipse'
+        into 'build/tmp/plugins/org.gradle.eclipse'
     }
     copy {
         from 'org.codehaus.gradle'
-        into 'build/tmp/org.codehaus.gradle'
+        into 'build/tmp/plugins/org.codehaus.gradle'
     }
 	copy {
         from 'org.gradle.eclipse.feature'
-        into 'build/tmp/org.gradle.eclipse.feature'
+        into 'build/tmp/features/org.gradle.eclipse.feature'
     }
 }
+
+
+
+//task assemble(dependsOn:'uploadPde', type: Zip) {
+//    from('build/tmp/publish')
+//    into "build/dists/gradle-eclipse/"
+//}
+
+task assemble(dependsOn:'uploadPde', type: Zip) {
+	baseName = "gradle-eclipse"
+	setDestinationDir(file('build/dists'))
+	from('build/tmp/publish')
+}
+
 
 task mergeGradleDist(dependsOn:'copyFragments') << {
 	String BUNDLE_CLASSPATH_PLACEHOLDER = "_BUNDLE_CLASSPATH_"
@@ -104,14 +149,16 @@ task mergeGradleDist(dependsOn:'copyFragments') << {
 		            details.path = details.path.substring(details.relativePath.segments[0].length())
 		        }
 		    }
-		 	into 'build/tmp/org.codehaus.gradle/'
+		 	into 'build/tmp/plugins/org.codehaus.gradle/'
 		}
 	}	
 	
 	String bundleClasspath = createBundleClasspath(zipContent);
-	File manifestFile = new File('build/tmp/org.codehaus.gradle/META-INF/MANIFEST.MF')
+	File manifestFile = new File('build/tmp/plugins/org.codehaus.gradle/META-INF/MANIFEST.MF')
 		
 	def manifestContent = manifestFile.text
 	manifestContent = manifestContent.replaceAll(BUNDLE_CLASSPATH_PLACEHOLDER, bundleClasspath)
 	manifestFile.write(manifestContent)
 }
+
+uploadPde.dependsOn mergeGradleDist
