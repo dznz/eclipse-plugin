@@ -43,14 +43,14 @@ apply id:'FeaturePde'
 buildscript { 
     repositories { 
 		add(new org.apache.ivy.plugins.resolver.URLResolver()) {
-	        name = 'pdePluginRepo'
-	        addArtifactPattern('http://github.com/breskeby/gradleplugins/raw/0.9-upgrade/pdePlugin/dists/[artifact]-[revision](-[classifier])(.[ext])')	
+			name = 'pdePluginRepo'
+			addArtifactPattern('http://github.com/breskeby/gradleplugins/raw/0.9-upgrade/pdePlugin/dists/[artifact]-[revision](-[classifier])(.[ext])')	
 		}
 		flatDir(dirs: "/Users/Rene/workspaces/gradle/github/gradleplugins/pdePlugin/build/libs")
 	} 
-    dependencies {
-        classpath ':pdePlugin:0.8' 
-    } 
+	dependencies {
+		classpath ':pdePlugin:0.8' 
+	} 
 }
 
 configure(featurePde){	
@@ -91,11 +91,11 @@ String createBundleClasspath(FileTree zipContent){
 //
 
 repositories {
-  // get the latest available gradle snapshot. Are files resolved via URLResolver are cacheable?
-  add(new org.apache.ivy.plugins.resolver.URLResolver()) {
-    name = 'gradle-snapshots'
-	addArtifactPattern 'http://snapshots.dist.codehaus.org/([organization]/)[artifact](-[revision])(-[classifier]).[ext]'
-  }
+	// get the latest available gradle snapshot. Are files resolved via URLResolver are cacheable?
+	add(new org.apache.ivy.plugins.resolver.URLResolver()) {
+		name = 'gradle-snapshots'
+		addArtifactPattern 'http://snapshots.dist.codehaus.org/([organization]/)[artifact](-[revision])(-[classifier]).[ext]'
+	}
 }
 
 configurations {
@@ -113,14 +113,14 @@ task clean(type: Delete) {
 }
 
 task copyFragments(dependsOn:'clean') << {
-    copy {
-        from 'plugins'
-        into 'build/tmp/plugins/'
-    }
 	copy {
-        from 'features'
-        into 'build/tmp/features/'
-    }
+		from 'plugins'
+		into 'build/tmp/plugins/'
+	}
+	copy {
+		from 'features'
+		into 'build/tmp/features/'
+	}
 }
 
 task assemble(dependsOn:'uploadPde', type: Zip) {
@@ -136,11 +136,11 @@ task mergeGradleDist(dependsOn:'copyFragments') << {
 	configurations.workspaceSetup.files.each { depFile ->
 		zipContent =  zipTree(depFile)
 		copy {
-		    from(zipTree(depFile)) {
-		        eachFile { details ->
-		            details.path = details.path.substring(details.relativePath.segments[0].length())
-		        }
-		    }
+			from(zipTree(depFile)) {
+				eachFile { details ->
+					details.path = details.path.substring(details.relativePath.segments[0].length())
+				}
+			}
 		 	into 'build/tmp/plugins/org.codehaus.gradle/'
 		}
 	}	
