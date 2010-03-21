@@ -37,7 +37,6 @@
 		- run tests
  */
 
-//apply url:"/Users/Rene/workspaces/gradle/github/gradleplugins/pdePlugin/build/libs/pdePlugin-0.8.jar"
 apply id:'FeaturePde'
 
 buildscript { 
@@ -100,7 +99,6 @@ repositories {
 
 configurations {
 	workspaceSetup // the configuration to build a complete pde environment workspace including a valid gradle dist
-	eclipseBase // the eclipse base setup needed to run a pde build
 }
 
 dependencies{
