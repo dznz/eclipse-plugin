@@ -45,7 +45,6 @@ buildscript {
 			name = 'pdePluginRepo'
 			addArtifactPattern('http://github.com/breskeby/gradleplugins/raw/0.9-upgrade/pdePlugin/dists/[artifact]-[revision](-[classifier])(.[ext])')	
 		}
-		flatDir(dirs: "/Users/Rene/workspaces/gradle/github/gradleplugins/pdePlugin/build/libs")
 	} 
 	dependencies {
 		classpath ':pdePlugin:0.8' 
