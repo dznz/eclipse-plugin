@@ -53,11 +53,6 @@ buildscript {
     } 
 }
 
-println "HELLO"
-if(!hasProperty('eclipseLocation')){
-	println "Property baseLocation not set!"
-}
-
 configure(featurePde){	
 	def projectDir = getRootDir()
 	featureName = "org.gradle.eclipse.feature"
