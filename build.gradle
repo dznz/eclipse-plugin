@@ -38,10 +38,14 @@
  */
 
 //apply url:"/Users/Rene/workspaces/gradle/github/gradleplugins/pdePlugin/build/libs/pdePlugin-0.8.jar"
-usePlugin(com.thalesgroup.gradle.pde.FeaturePdeBuild)
+apply id:'FeaturePde'
 
 buildscript { 
     repositories { 
+		add(new org.apache.ivy.plugins.resolver.URLResolver()) {
+	        name = 'pdePluginRepo'
+	        addArtifactPattern('http://github.com/breskeby/gradleplugins/raw/0.9-upgrade/pdePlugin/dists/[artifact]-[revision](-[classifier])(.[ext])')	
+		}
 		flatDir(dirs: "/Users/Rene/workspaces/gradle/github/gradleplugins/pdePlugin/build/libs")
 	} 
     dependencies {
@@ -49,21 +53,25 @@ buildscript {
     } 
 }
 
+println "HELLO"
+if(!hasProperty('eclipseLocation')){
+	println "Property baseLocation not set!"
+}
+
 configure(featurePde){	
 	def projectDir = getRootDir()
 	featureName = "org.gradle.eclipse.feature"
 	envConfigs = "*, *, *"
-	buildDirectory = "/Users/Rene/workspaces/gradle/github/eclipse-plugin/build/tmp"
+	buildDirectory = file("build/tmp/")
 	publishDirectory = "${projectDir}/build/tmp/publish"	
 	pluginsSrcDirList = ["${projectDir}/build/tmp/plugins"]
 	featuresSrcDir = "${projectDir}/build/tmp/features"
 	builderDir = "${projectDir}/build/tmp"
-	base = "/Applications"
 	buildId = "graclipse"
-	baseLocation = "/Applications/eclipse-sdk-3.5.2"	
-	eclipseLocation = "/Applications/eclipse-sdk-3.5.2"
-	eclipseLauncher = "/Applications/eclipse-sdk-3.5.2"
-	equinoxLauncher="/Applications/eclipse-sdk-3.5.2/plugins/org.eclipse.equinox.launcher"
+	baseLocation = eclipseLocation
+	eclipseLocation = "${baseLocation}"
+	eclipseLauncher = "${baseLocation}"
+	equinoxLauncher="${baseLocation}/plugins/org.eclipse.equinox.launcher"
 	equinoxLauncherPluginVersion = "1.0.201.R35x_v20090715"
 	pdeBuildPluginVersion = "3.5.2.R35x_20100114"
 }
@@ -111,25 +119,14 @@ task clean(type: Delete) {
 
 task copyFragments(dependsOn:'clean') << {
     copy {
-        from 'org.gradle.eclipse'
-        into 'build/tmp/plugins/org.gradle.eclipse'
-    }
-    copy {
-        from 'org.codehaus.gradle'
-        into 'build/tmp/plugins/org.codehaus.gradle'
+        from 'plugins'
+        into 'build/tmp/plugins/'
     }
 	copy {
-        from 'org.gradle.eclipse.feature'
-        into 'build/tmp/features/org.gradle.eclipse.feature'
+        from 'features'
+        into 'build/tmp/features/'
     }
 }
-
-
-
-//task assemble(dependsOn:'uploadPde', type: Zip) {
-//    from('build/tmp/publish')
-//    into "build/dists/gradle-eclipse/"
-//}
 
 task assemble(dependsOn:'uploadPde', type: Zip) {
 	baseName = "gradle-eclipse"
