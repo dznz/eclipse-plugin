@@ -43,13 +43,6 @@ public class GradlePreferenceInitializer extends AbstractPreferenceInitializer {
 	private void initGradleRuntimePreferences(IPreferenceStore prefs) {
 		prefs.setDefault(IGradlePreferenceConstants.USE_SPECIFIC_GRADLE_HOME, false);
 		prefs.setDefault(IGradlePreferenceConstants.GRADLE_FIND_BUILD_FILE_NAMES, "build.gradle");
-		String gradleHome = getDefaultGradleHome();
-		
-		if(gradleHome!=null){
-			prefs.setDefault(IGradlePreferenceConstants.MANUELL_GRADLE_HOME, gradleHome);
-		}
-		
-		
 		PreferenceConverter.setDefault(prefs, IGradlePreferenceConstants.CONSOLE_ERROR_COLOR, new RGB(255, 0, 0)); // red - exactly the same as debug Console
 		PreferenceConverter.setDefault(prefs, IGradlePreferenceConstants.CONSOLE_WARNING_COLOR, new RGB(250, 100, 0)); // orange
 		PreferenceConverter.setDefault(prefs, IGradlePreferenceConstants.CONSOLE_INFO_COLOR, new RGB(0, 0, 255)); // blue

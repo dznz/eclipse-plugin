@@ -29,7 +29,6 @@ import org.gradle.eclipse.job.BuildJob;
 import org.gradle.eclipse.job.RefreshTaskJob;
 import org.gradle.eclipse.launchConfigurations.GradleProcess;
 import org.gradle.foundation.ProjectView;
-import org.gradle.gradleplugin.foundation.CommandLineArgumentAlteringListener;
 import org.gradle.gradleplugin.foundation.GradlePluginLord;
 
 
@@ -81,15 +80,6 @@ public class GradleExecScheduler {
 				final GradlePluginLord gradlePluginLord = new GradlePluginLord();
 				gradlePluginLord.setGradleHomeDirectory(new File(GradlePlugin.getPlugin().getGradleHome()));
 				gradlePluginLord.setCurrentDirectory(absoluteDirectory);
-//				gradlePluginLord.
-//				gradlePluginLord.addCommandLineArgumentAlteringListener(new CommandLineArgumentAlteringListener(){
-//
-//					public String getAdditionalCommandLineArguments(String arg0) {
-//						// TODO Auto-generated method stub
-//						return null;
-//					}
-//					
-//				});
 				RefreshTaskJob job = new RefreshTaskJob(gradlePluginLord, absolutePath, cache);
 				
 				if(!synched){

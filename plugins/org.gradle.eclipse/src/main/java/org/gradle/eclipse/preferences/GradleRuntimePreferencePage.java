@@ -47,7 +47,9 @@ public class GradleRuntimePreferencePage extends FieldEditorPreferencePage imple
 	
 	private List consoleColorList;
 	private ColorEditor consoleColorEditor;
-
+	private BooleanFieldEditor useGradleFieldEditor;
+	private DirectoryFieldEditor gradleHomeDirectoryFieldEditor;
+	
 	// Array containing the message to display, the preference key, and the 
 	// default value (initialized in storeInitialValues()) for each color preference
 	private final String[][] fAppearanceColorListModel= new String[][] {
@@ -103,15 +105,32 @@ public class GradleRuntimePreferencePage extends FieldEditorPreferencePage imple
 		FieldEditor editor = new StringFieldEditor(IGradlePreferenceConstants.GRADLE_FIND_BUILD_FILE_NAMES, GradlePreferencesMessages.GradleRuntimePreferencePage_BuildFileName, getFieldEditorParent());
 		addField(editor);
 		
-		editor = new DirectoryFieldEditor(IGradlePreferenceConstants.MANUELL_GRADLE_HOME, GradlePreferencesMessages.GradleRuntimePreferencePage_GradleHome_Label, getFieldEditorParent());
-		addField(editor);
 	
-		editor = new BooleanFieldEditor(IGradlePreferenceConstants.USE_SPECIFIC_GRADLE_HOME, GradlePreferencesMessages.GradleRuntimePreferencePage_USE_MANUEL_GRADLE_HOME, getFieldEditorParent());
-		addField(editor);
+		useGradleFieldEditor = new BooleanFieldEditor(IGradlePreferenceConstants.USE_SPECIFIC_GRADLE_HOME, GradlePreferencesMessages.GradleRuntimePreferencePage_USE_MANUEL_GRADLE_HOME, getFieldEditorParent());
+		useGradleFieldEditor.setPropertyChangeListener(this);
+		addField(useGradleFieldEditor);
+		
+		gradleHomeDirectoryFieldEditor = new DirectoryFieldEditor(IGradlePreferenceConstants.MANUELL_GRADLE_HOME, GradlePreferencesMessages.GradleRuntimePreferencePage_GradleHome_Label, getFieldEditorParent());
+		gradleHomeDirectoryFieldEditor.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
+		gradleHomeDirectoryFieldEditor.setPropertyChangeListener(this);
+		addField(gradleHomeDirectoryFieldEditor);
+		
+		
+		boolean useCustom = getPreferenceStore().getBoolean(IGradlePreferenceConstants.USE_SPECIFIC_GRADLE_HOME);
+		if(useCustom){
+			gradleHomeDirectoryFieldEditor.setEmptyStringAllowed(false);
+			gradleHomeDirectoryFieldEditor.setEnabled(true, getFieldEditorParent());
+		}else{			
+			gradleHomeDirectoryFieldEditor.setEmptyStringAllowed(true);
+			gradleHomeDirectoryFieldEditor.setEnabled(false, getFieldEditorParent());
+		}
 		createSpace();
 		getPreferenceStore().addPropertyChangeListener(this);
 		
 		createColorComposite();
+		
+		
+		checkState();
 	}
 	
 	/**
@@ -126,6 +145,7 @@ public class GradleRuntimePreferencePage extends FieldEditorPreferencePage imple
 			fAppearanceColorListModel[i][2]= store.getString(preference);
 		}
 	}
+	
 	private void createColorComposite() {
 		Font font= getFieldEditorParent().getFont();
 		Label label= new Label(getFieldEditorParent(), SWT.LEFT);
@@ -180,6 +200,7 @@ public class GradleRuntimePreferencePage extends FieldEditorPreferencePage imple
 				handleAppearanceColorListSelection();
 			}
 		});
+		
 		foregroundColorButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				int i= consoleColorList.getSelectionIndex();
@@ -214,6 +235,7 @@ public class GradleRuntimePreferencePage extends FieldEditorPreferencePage imple
 	 * @see IWorkbenchPreferencePage#init(IWorkbench)
 	 */
 	public void init(IWorkbench workbench) {
+		
 	}
 	
 	
@@ -228,5 +250,15 @@ public class GradleRuntimePreferencePage extends FieldEditorPreferencePage imple
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
+		if(event.getSource().equals(useGradleFieldEditor)){
+			boolean useCustomHome = (Boolean)event.getNewValue();
+			String stringValue = gradleHomeDirectoryFieldEditor.getStringValue();
+			gradleHomeDirectoryFieldEditor.setEnabled(useCustomHome, getFieldEditorParent());
+			gradleHomeDirectoryFieldEditor.setEmptyStringAllowed(!useCustomHome);
+			gradleHomeDirectoryFieldEditor.setStringValue(stringValue);
+			gradleHomeDirectoryFieldEditor.load();
+			gradleHomeDirectoryFieldEditor.setStringValue(stringValue);
+		}
+		checkState();
 	}
 }

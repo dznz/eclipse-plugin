@@ -26,6 +26,7 @@ public class GradleRefreshRequestExecutionInteraction extends GradleProcessExecL
 
 	public GradleRefreshRequestExecutionInteraction(IProgressMonitor monitor) {
 		super(monitor);
+		successful = true;
 	}
 
 	public void reportExecutionStarted() {

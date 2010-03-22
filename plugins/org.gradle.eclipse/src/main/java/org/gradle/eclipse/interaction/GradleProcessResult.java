@@ -13,17 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.gradle.eclipse.job;
+package org.gradle.eclipse.interaction;
 
-import org.eclipse.core.runtime.jobs.Job;
 
 /**
  * @author Rene Groeschke
- * This class represents a Job which schedules different gradle builds.
+ *
  */
-abstract class AbstractGradleJob extends Job{
+public class GradleProcessResult {
 
-	public AbstractGradleJob(String name) {
-		super(name);
+	private boolean complete = false;
+	private int result = 0;
+
+	public int getResult() {
+		return result;
+	}
+
+	public void setResult(int result) {
+		this.result = result;
+	}
+
+	public boolean isComplete() {
+		return complete;
+	}
+	
+	public void setComplete(boolean complete) {
+		this.complete = complete;
 	}
 }

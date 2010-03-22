@@ -28,7 +28,13 @@ public abstract class GradleProcessExecListener implements
 	private IProgressMonitor monitor;
 	protected boolean finished = false;
 	protected Throwable throwable = null;
+	protected boolean successful;
+	private String message;
 	
+	public String getMessage() {
+		return message;
+	}
+
 	public boolean isFinished() {
 		return finished;
 	}
@@ -38,10 +44,12 @@ public abstract class GradleProcessExecListener implements
 		
 	}
 
-	public void reportExecutionFinished(boolean arg0, String arg1,
+	public void reportExecutionFinished(boolean success, String arg1,
 			Throwable thrown) {
 		finished = true;
 		throwable = thrown;
+		successful = success;
+		message = arg1;
 		worked(10);
 	}
 
@@ -70,5 +78,9 @@ public abstract class GradleProcessExecListener implements
 	 * */
 	public Throwable getThrowable() {
 		return throwable;
+	}
+
+	public boolean isSuccessful() {
+		return successful;
 	}
 }

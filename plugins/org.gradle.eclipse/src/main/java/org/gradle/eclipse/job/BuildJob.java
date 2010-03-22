@@ -23,6 +23,7 @@ import org.eclipse.debug.core.ILaunchConfiguration;
 import org.gradle.eclipse.GradlePlugin;
 import org.gradle.eclipse.interaction.GradleBuildExecutionInteraction;
 import org.gradle.eclipse.interaction.GradleProcessExecListener;
+import org.gradle.eclipse.interaction.GradleProcessResult;
 import org.gradle.eclipse.launchConfigurations.GradleProcess;
 import org.gradle.gradleplugin.foundation.GradlePluginLord;
 import org.gradle.gradleplugin.foundation.request.ExecutionRequest;
@@ -54,7 +55,7 @@ public class BuildJob extends AbstractGradleJob {
 				monitor, process);
 		pluginLord.startExecutionQueue();
 
-		final BooleanHolder isComplete = new BooleanHolder();
+		final GradleProcessResult processResult = new GradleProcessResult();
 		// /
 		GradlePluginLord.RequestObserver observer = new GradlePluginLord.RequestObserver() {
 			public void executionRequestAdded(ExecutionRequest request) {
@@ -69,9 +70,14 @@ public class BuildJob extends AbstractGradleJob {
 
 			}
 
+			/**
+			 * -1 indicates failing process creation
+			 * 1 indicates process started correctly but build failed
+			 * */
 			public void requestExecutionComplete(Request request, int result,
 					String output) {
-				isComplete.setValue(true);
+				processResult.setComplete(true);
+				processResult.setResult(result);
 			}
 		};
 
@@ -85,7 +91,7 @@ public class BuildJob extends AbstractGradleJob {
 		// gradlePluginLord.addExecutionRequestToQueue(commandLine,
 		// executionlistener);
 		// keep job open til listener reports gradle has finished
-		while (!isComplete.getValue()) {
+		while (!processResult.isComplete()) {
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
@@ -97,6 +103,12 @@ public class BuildJob extends AbstractGradleJob {
 		if (executionlistener.getThrowable() != null) {
 			return new Status(IStatus.WARNING, GradlePlugin.PLUGIN_ID,
 					"Error while running Gradle Tasks", executionlistener
+							.getThrowable());
+		}
+		
+		if(!executionlistener.isSuccessful() && processResult.getResult()==-1) {
+			return new Status(IStatus.ERROR, GradlePlugin.PLUGIN_ID,
+					"Error while starting Gradle Process. Please check that GRADLE_HOME is defined correctly in your preferences!", executionlistener
 							.getThrowable());
 		}
 		return Status.OK_STATUS;

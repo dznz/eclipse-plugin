@@ -26,6 +26,7 @@ import java.util.Set;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Color;
@@ -261,14 +262,22 @@ public class GradlePlugin extends AbstractUIPlugin {
 	 * */
 	public String getGradleHome(){
 		//is gradlehome configured?
-		String gradleHome = getPlugin().getPreferenceStore().getString(IGradlePreferenceConstants.MANUELL_GRADLE_HOME);
-		
-		if(gradleHome!=null && !gradleHome.trim().equals("")){
-			return gradleHome;
-		}else{
-			return getDefaultGradleHome();
-		}
-		
+		boolean useCustomGradleHome = getPlugin().getPreferenceStore().getBoolean(IGradlePreferenceConstants.USE_SPECIFIC_GRADLE_HOME);
+		if(useCustomGradleHome){
+			String gradleHome = getPlugin().getPreferenceStore().getString(IGradlePreferenceConstants.MANUELL_GRADLE_HOME);
+			if(gradleHome!=null && !gradleHome.trim().equals("")){
+				return gradleHome;
+			}else{
+				GradlePlugin.getStandardDisplay().asyncExec
+			    (new Runnable() {
+			        public void run() {
+			            MessageDialog.openWarning(GradlePlugin.getStandardDisplay().getActiveShell(),
+			            			GradleMessages.INVALID_GRADLE_HOME,GradleMessages.INVALID_GRADLE_HOME);
+			        }
+			    });
+			}
+		}		
+		return getDefaultGradleHome();
 	}
 	
 	

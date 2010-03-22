@@ -22,6 +22,8 @@ import org.eclipse.osgi.util.NLS;
  * */
 public class GradleMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.gradle.eclipse.GradleMessages";//$NON-NLS-1$
+
+	protected static String INVALID_GRADLE_HOME;
 	
 	public static String GradleRunnerBuildFailed1;
 	public static String ImageDescriptorRegistryAllocatingImageForWrongDisplay1;

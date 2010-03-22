@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.Status;
 import org.gradle.eclipse.BuildInformationCache;
 import org.gradle.eclipse.GradlePlugin;
 import org.gradle.eclipse.interaction.GradleProcessExecListener;
+import org.gradle.eclipse.interaction.GradleProcessResult;
 import org.gradle.eclipse.interaction.GradleRefreshRequestExecutionInteraction;
 import org.gradle.foundation.ProjectView;
 import org.gradle.gradleplugin.foundation.GradlePluginLord;
@@ -63,7 +64,7 @@ public class RefreshTaskJob extends AbstractGradleJob{
 		final GradleProcessExecListener executionlistener = new GradleRefreshRequestExecutionInteraction(monitor);
 		
 		pluginLord.startExecutionQueue();
-		final BooleanHolder isComplete = new BooleanHolder();
+		final GradleProcessResult processResult = new GradleProcessResult();
 
 		StringBuffer additionalCmdLine = new StringBuffer(" -b ");
 		additionalCmdLine.append(getBuildFileName());
@@ -80,14 +81,15 @@ public class RefreshTaskJob extends AbstractGradleJob{
 	           }
 
 	           public void requestExecutionComplete( Request request, int result, String output ) {
-	        	   isComplete.setValue(true);
+	        	   processResult.setComplete(true);
+	        	   processResult.setResult(result);
 	           }
 	        };
 
 	    pluginLord.addRequestObserver(observer, false);
 	    pluginLord.addRefreshRequestToQueue(additionalCmdLine.toString());
 		//keep job open til listener reports gradle has finished
-		while(!isComplete.getValue()){
+		while(!processResult.isComplete()){
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
@@ -96,8 +98,11 @@ public class RefreshTaskJob extends AbstractGradleJob{
 		}
 		List<ProjectView> projects = pluginLord.getProjects();
 		cache.put(buildFilePath, projects);
-		if(executionlistener.getThrowable()!=null){
-			return new Status(IStatus.WARNING, GradlePlugin.PLUGIN_ID, "Error while recalculating Gradle Tasks");
+		
+		if( processResult.getResult() == -1) {
+			return new Status(IStatus.ERROR, GradlePlugin.PLUGIN_ID,
+					"Error while starting Gradle Process. Please check that GRADLE_HOME is defined correctly in your preferences!", executionlistener
+							.getThrowable());
 		}
 		return Status.OK_STATUS;	
 	}

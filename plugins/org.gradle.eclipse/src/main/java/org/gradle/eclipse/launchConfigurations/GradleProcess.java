@@ -90,7 +90,6 @@ public class GradleProcess extends PlatformObject implements IProcess, IProgress
 	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
 	 */
 	public boolean canTerminate() {
-		System.out.println("canTerminate " + isCanceled() + " : " + isTerminated());
 		return !isCanceled() && !isTerminated();
 	}
 
