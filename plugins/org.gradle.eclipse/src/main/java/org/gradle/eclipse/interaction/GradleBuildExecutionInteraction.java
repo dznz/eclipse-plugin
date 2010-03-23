@@ -19,7 +19,6 @@ package org.gradle.eclipse.interaction;
 import java.io.IOException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.gradle.eclipse.GradlePlugin;
 import org.gradle.eclipse.launchConfigurations.GradleProcess;
 import org.gradle.foundation.ipc.gradle.ExecuteGradleCommandServerProtocol;
 
@@ -31,6 +30,9 @@ import org.gradle.foundation.ipc.gradle.ExecuteGradleCommandServerProtocol;
  * */
 public class GradleBuildExecutionInteraction extends GradleProcessExecListener{
 	private GradleProcess process = null;
+	private static int HUNDRED_PERCENT = 100;
+	private static int START_PERCENTAGE = 5;
+	private int percentProTask = 10;
 	
 	public GradleBuildExecutionInteraction(IProgressMonitor monitor, GradleProcess gradleProcess) {
 		super(monitor);
@@ -48,8 +50,9 @@ public class GradleBuildExecutionInteraction extends GradleProcessExecListener{
 	 * @see ExecuteGradleCommandServerProtocol.ExecutionInteraction#reportExecutionStarted()
 	 * */
 	public void reportExecutionStarted() {
-		beginTask("Executing Gradle Build", 100);
-		worked(10);
+		beginTask("Executing Gradle Build", HUNDRED_PERCENT);
+		worked(START_PERCENTAGE);
+		System.out.println("reportExecutionStarted");
 	}
 
 	/**
@@ -69,7 +72,7 @@ public class GradleBuildExecutionInteraction extends GradleProcessExecListener{
 	 * @see ExecuteGradleCommandServerProtocol.ExecutionInteraction#reportTaskComplete(String, float)
 	 * */
 	public void reportTaskComplete(String arg0, float arg1) {
-		worked(10);
+		worked(percentProTask);
 	}
 
 	/**
@@ -80,11 +83,12 @@ public class GradleBuildExecutionInteraction extends GradleProcessExecListener{
 	}
 
 
-	public void reportNumberOfTasksToExecute(int arg0) {
-		try {
-			process.getStreamsProxy().write("running #tasks: " + Integer.toString(arg0));
-		} catch (IOException e) {
-			GradlePlugin.log(e);
-		}
+	public void reportNumberOfTasksToExecute(int tasksCount) {
+		System.out.println("reportNumberOfTasks: " + Integer.toString(tasksCount) + "  " + calculateTaskPercentage(tasksCount));
+		this.percentProTask = calculateTaskPercentage(tasksCount);
+	}
+	
+	private int calculateTaskPercentage(int numberOfTasks){		
+		return ((HUNDRED_PERCENT-START_PERCENTAGE) / numberOfTasks);
 	}
 };
