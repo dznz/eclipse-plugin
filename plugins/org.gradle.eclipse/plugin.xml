@@ -19,6 +19,26 @@
             id="com.breskeby.eclipse.gradle.ui.consoleColorProvider">
       </consoleColorProvider>
    </extension>
+   <extension point="org.eclipse.ui.console.consolePatternMatchListeners">
+      <!--<consolePatternMatchListener
+            class="org.eclipse.ant.internal.ui.console.AntJavacPatternMatcher"
+            id="org.gradle.eclipse.ui.console.AntJavacPatternMatcher"
+            qualifier="javac"
+            regex="\[ant:javac.*\] .*(\.java:.*:.*|.*\.java)">
+         <enablement>
+            <test property="org.eclipse.debug.ui.processTypeTest" value="org.gradle.eclipse.gradleProcess"/>
+         </enablement>
+      </consolePatternMatchListener>-->
+      <consolePatternMatchListener
+            class="org.eclipse.ant.internal.ui.console.AntJavacPatternMatcher"
+            id="org.gradle.eclipse.ui.console.AntJavacFullpathPatternMatcher"
+            qualifier="javac"
+            regex="\[ant:javac*\] File to be compiled:\s.*(\.java:.*:.*|.*\.java)">
+         <enablement>
+            <test property="org.eclipse.debug.ui.processTypeTest" value="org.gradle.eclipse.gradleProcess"/>
+         </enablement>
+      </consolePatternMatchListener>
+   </extension>
    <extension point="org.eclipse.core.runtime.preferences">
 		<initializer class="org.gradle.eclipse.preferences.GradlePreferenceInitializer"/>
 	</extension>
