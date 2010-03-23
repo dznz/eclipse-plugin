@@ -65,7 +65,7 @@
             category="org.eclipse.ui.externaltools"
             class="org.gradle.eclipse.launchConfigurations.GradleLaunchShortcut"
             description="%GradleBuildShortcut.description"
-            icon="icons/run_gradle_build.gif"
+            icon="icons/gradleicon.gif"
             id="org.gradle.eclipse.ui.gradleShortcut"
             label="%GradleLaunchShortcut.label"
             modes="run">
@@ -91,7 +91,7 @@
             category="org.eclipse.ui.externaltools"
             class="org.gradle.eclipse.launchConfigurations.GradleLaunchShortcutWithDialog"
             description="%GradleBuild...Shortcut.description"
-            icon="icons/run_gradle_build.gif"
+            icon="icons/gradleicon.gif"
             id="org.gradle.eclipse.ui.gradleShortcutWithDialog"
             label="%GradleLaunchShortcutWithDialog.label"
             modes="run">
