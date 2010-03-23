@@ -117,7 +117,7 @@ public class GradleConsoleColorProvider extends ConsoleColorProvider implements 
 	 * @see org.eclipse.debug.ui.console.IConsoleColorProvider#disconnect()
 	 */
 	public void disconnect() {
-		GradlePlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 		super.disconnect();
+		GradlePlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 	}
 }

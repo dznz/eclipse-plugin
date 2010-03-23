@@ -65,10 +65,7 @@ public class GradleStreamsProxy implements IStreamsProxy {
 	}
 
 	private GradleStreamMonitor getMonitorByLineParsing(String line) {
-		System.out.println("LINE>>" + line +">>ENDE");
 		if(line.contains(" [main] DEBUG ")){
-			System.out.println("LINE>> debugmonitor");
-				
 			return fDebugMonitor;
 		}else if(line.contains("[main] WARN  ")){
 			return fWarningMonitor;
