@@ -28,7 +28,6 @@ import org.eclipse.debug.ui.CommonTab;
 import org.eclipse.debug.ui.RefreshTab;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.gradle.eclipse.GradlePlugin;
 import org.gradle.eclipse.IGradleConstants;
 import org.gradle.eclipse.preferences.IGradlePreferenceConstants;
@@ -39,7 +38,6 @@ import com.ibm.icu.text.MessageFormat;
 /**
  * @author Rene Groeschke
  */
-@SuppressWarnings("restriction")
 public class GradleLaunchDelegate extends LaunchConfigurationDelegate  {
 
 	public void launch(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {

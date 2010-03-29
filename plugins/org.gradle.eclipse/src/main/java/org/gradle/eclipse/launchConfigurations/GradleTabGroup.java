@@ -26,14 +26,12 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.gradle.eclipse.IGradleConstants;
 
 /**
  * @author Rene Groeschke
  *
  */
-@SuppressWarnings("restriction")
 public class GradleTabGroup extends AbstractLaunchConfigurationTabGroup {
     
 	/* (non-Javadoc)

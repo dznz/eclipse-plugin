@@ -27,8 +27,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsLaunchConfigurationMessages;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsMainTab;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.ui.FileSelectionDialog;
 import org.gradle.eclipse.IGradleConstants;
 
@@ -115,6 +117,20 @@ public class GradleMainTab extends ExternalToolsMainTab {
 			ExternalToolsPlugin.getDefault().log(GradleLaunchConfigurationMessages.GradleMainTab_Error_reading_configuration, ce);
 		}
 		locationField.setText(location);
+	}
+	
+	/**
+	 * Updates the argument widgets to match the state of the given launch
+	 * configuration.
+	 */
+	protected void updateArgument(ILaunchConfiguration configuration) {
+		String arguments= ""; //$NON-NLS-1$
+		try {
+			arguments= configuration.getAttribute(IGradleConstants.ATTR_TOOL_ARGUMENTS, ""); //$NON-NLS-1$
+		} catch (CoreException ce) {
+			ExternalToolsPlugin.getDefault().log(GradleLaunchConfigurationMessages.GradleMainTab_Error_reading_configuration, ce);
+		}
+		argumentField.setText(arguments);
 	}
 	
 	//empty method needed to hide working directory

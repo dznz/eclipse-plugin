@@ -88,8 +88,6 @@ public class GradleLaunchShortcut implements ILaunchShortcut2 {
 					} 
 					if (resource != null) {
 						IFile file = (IFile) resource;
-////						System.out.println();
-//						System.out.println(file.getLocation());
 						launch(file.getFullPath(), file.getProject(), mode, null);
 						return;
 					}
@@ -517,10 +515,6 @@ public class GradleLaunchShortcut implements ILaunchShortcut2 {
 				filepath = locationProvider.getPath(input);
 			}
 		}
-//		if(filepath != null && "xml".equals(filepath.getFileExtension())) { //$NON-NLS-1$
-//			List<ILaunchConfiguration> list = collectConfigurations(filepath);
-//			return (ILaunchConfiguration[]) list.toArray(new ILaunchConfiguration[list.size()]);
-//		}
 		return null;
 	}
 
