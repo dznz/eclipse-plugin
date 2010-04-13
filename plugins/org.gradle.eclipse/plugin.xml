@@ -21,8 +21,8 @@
    </extension>
    <extension point="org.eclipse.ui.console.consolePatternMatchListeners">
            <consolePatternMatchListener
-            class="org.gradle.eclipse.ui.console.AntJavacPatternMatcher"
-            id="org.gradle.eclipse.ui.console.AntJavacFullpathPatternMatcher"
+            class="org.gradle.eclipse.ui.console.GradleJavacPatternMatcher"
+            id="org.gradle.eclipse.ui.console.GradleJavacPatternMatcher"
             qualifier="javac"
             regex="\[ant:javac*\] File to be compiled:\s.*(\.java:.*:.*|.*\.java)">
          <enablement>

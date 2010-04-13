@@ -27,7 +27,7 @@
  *	By default it imports the gradle-api exported via org.codehaus.gradle
  *
  * To build this gradle eclipse plugin the following steps should be implemented in this build file:
- *	1. copy org.coehaus.gradle and org.gradle.eclipse to a build working directory.
+ *	1. copy org.codehaus.gradle and org.gradle.eclipse to a build working directory.
 	2. resolve a matching gradle distribution and merge it into the org.codehaus.gradle plugin skeleton.
 	3. update the import/export statements in the osgi manifests of org.gradle.eclipse and org.codehaus.gradle
 	4. resolve a eclipse distribution to run the pde build (actual we're using eclipse-sdk-3.5.2)
@@ -37,21 +37,21 @@
 		- run tests
  */
 
-apply id:'FeaturePde'
+apply plugin:'FeaturePde'
 
 buildscript { 
     repositories { 
 		add(new org.apache.ivy.plugins.resolver.URLResolver()) {
 			name = 'pdePluginRepo'
-			addArtifactPattern('http://github.com/breskeby/gradleplugins/raw/0.9-upgrade/pdePlugin/dists/[artifact]-[revision](-[classifier])(.[ext])')	
+			addArtifactPattern('http://github.com/breskeby/gradleplugins/raw/gradle-eplugin-build/pdePlugin/dists/[artifact]-[revision](-[classifier])(.[ext])')	
 		}
 	} 
 	dependencies {
-		classpath ':pdePlugin:0.8' 
+		classpath ':pdePlugin:5.0' 
 	} 
 }
 
-configure(featurePde){	
+configure(FeaturePde){	
 	def projectDir = getRootDir()
 	featureName = "org.gradle.eclipse.feature"
 	envConfigs = "*, *, *"
@@ -101,12 +101,12 @@ configurations {
 }
 
 dependencies{
-	workspaceSetup "gradle:gradle:0.9-20100315112026+0100:bin@zip"
+	workspaceSetup "gradle:gradle:0.9-20100409151905+1000:bin@zip"
 }
 
 //tasks
 task clean(type: Delete) {
-	from 'build'
+	delete('build')
 }
 
 task copyFragments(dependsOn:'clean') << {
@@ -120,7 +120,7 @@ task copyFragments(dependsOn:'clean') << {
 	}
 }
 
-task assemble(dependsOn:'uploadPde', type: Zip) {
+task assemble(dependsOn:'pdeUpload', type: Zip) {
 	baseName = "gradle-eclipse"
 	setDestinationDir(file('build/dists'))
 	from('build/tmp/publish')
@@ -150,4 +150,4 @@ task mergeGradleDist(dependsOn:'copyFragments') << {
 	manifestFile.write(manifestContent)
 }
 
-uploadPde.dependsOn mergeGradleDist
+pdeUpload.dependsOn mergeGradleDist
